@@ -10,7 +10,6 @@ Shotgun==0.1.0
 alembic==0.6.2
 amqplib==1.0.2
 anyjson==0.3.3
-argparse==1.2.1
 decorator==3.4.0
 fysom==1.0.11
 iso8601==0.1.9
