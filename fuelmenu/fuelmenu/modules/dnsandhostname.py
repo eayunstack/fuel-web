@@ -42,6 +42,8 @@ class dnsandhostname(urwid.WidgetWrap):
         self.gateway = self.get_default_gateway_linux()
         self.extdhcp = True
         self.parent = parent
+        self.activeiface = sorted(self.netsettings.keys())[0]
+        self.parent.managediface = self.activeiface
 
         #UI Text
         self.header_content = ["DNS and hostname setup", "Note: Leave "
