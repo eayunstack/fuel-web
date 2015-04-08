@@ -23,7 +23,7 @@ setup(
     author='Mirantis Inc.',
     author_email='product@mirantis.com',
     url='http://mirantis.com',
-    install_requires=['PyYAML==3.10', "argparse==1.2.1"],
+    install_requires=['PyYAML==3.10'],
     packages=find_packages(),
     package_data = {'': ['*.yaml']},
     entry_points={
