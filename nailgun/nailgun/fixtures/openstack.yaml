@@ -1221,7 +1221,7 @@
       editable:
         kernel_params:
           kernel:
-            value: "console=ttyS0,9600 console=tty0 biosdevname=0 crashkernel=none rootdelay=90 nomodeset"
+            value: "console=ttyS0,9600 console=tty0 biosdevname=0 net.ifnames=0 crashkernel=none rootdelay=90 nomodeset"
         vlan_splinters:
           metadata:
             toggleable: true
