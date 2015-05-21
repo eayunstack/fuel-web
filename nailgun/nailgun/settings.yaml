@@ -801,5 +801,5 @@ LOAD_TESTS_PATHS:
     last_performance_test: "/tmp/nailgun_performance_tests/tests/last/"
     load_tests_results: "/tmp/nailgun_performance_tests/results/"
 
-DNS_UPSTREAM: "8.8.8.8, 8.8.4.4"
+DNS_UPSTREAM: "114.114.114.114, 8.8.8.8"
 NTP_UPSTREAM: "0.pool.ntp.org, 1.pool.ntp.org"

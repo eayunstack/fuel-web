@@ -576,7 +576,7 @@
             weight: 20
             type: "checkbox"
           nova_quota:
-            value: false
+            value: true 
             label: "Nova quotas"
             description: "Quotas are used to limit CPU and memory usage for tenants. Enabling quotas will increase load on the Nova database."
             weight: 25
@@ -903,7 +903,7 @@
               error: 'Empty images directory'
             restrictions: *glance_vcenter_restr
           ephemeral_ceph:
-            value: false
+            value: true 
             label: "Ceph RBD for ephemeral volumes (Nova)"
             description: "Configures Nova to store ephemeral volumes in RBD. This works best if Ceph is enabled for volumes and images, too. Enables live migration of all types of Ceph backed VMs (without this option, live migration will only work with VMs launched from Cinder volumes)."
             weight: 75
