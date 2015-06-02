@@ -131,6 +131,8 @@ def get_node_spaces(node):
             space = find_space_by_id(all_spaces, volume['id'])
             if space not in node_spaces:
                 space['_allocate_size'] = get_allocate_size(node, volume)
+                if len(volumes) == 1:
+                    space['_allocate_size'] = 'all'
                 node_spaces.append(space)
 
     # Use role `other`
