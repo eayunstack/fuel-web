@@ -150,10 +150,16 @@ def get_node_spaces(node):
 def calc_glance_cache_size(volumes):
     """Calculate glance cache size based on formula:
     10%*(/var/lib/glance) if > 5GB else 5GB
+    As we're going to enable glance cache with RBD backend,
+    This change to be:
+    10%*(/) if > 5GB else 5GB
     """
     cache_size_form = lambda size: int(0.1 * mb_to_byte(size))
     cache_min_size = gb_to_byte(5)
-    glance_mount_size = find_size_by_name(volumes, 'glance', 'image')
+    if len(volumes) == 1:
+        glance_mount_size = find_size_by_name(volumes, 'root', 'os')
+    else:
+        glance_mount_size = find_size_by_name(volumes, 'glance', 'image')
     cache_size = cache_size_form(glance_mount_size)
     return str(cache_size if cache_size > cache_min_size else cache_min_size)
 

@@ -988,11 +988,9 @@ class DeploymentMultinodeSerializer(object):
     def get_image_cache_max_size(self, node):
         images_ceph = (node.cluster.attributes['editable']['storage']
                        ['images_ceph']['value'])
-        if images_ceph:
-            image_cache_max_size = '0'
-        else:
-            image_cache_max_size = volume_manager.calc_glance_cache_size(
-                node.attributes.volumes)
+        # We're going to enable glance cache with RBD backend
+        image_cache_max_size = volume_manager.calc_glance_cache_size(
+            node.attributes.volumes)
         return {'glance': {'image_cache_max_size': image_cache_max_size}}
 
     def generate_test_vm_image_data(self, node):
