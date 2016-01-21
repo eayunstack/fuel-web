@@ -12,7 +12,7 @@
                 "render_type": null,
                 "render_addr_mask": null,
                 "map_priority": 0,
-                "unmovable": true,
+                "unmovable": false,
                 "configurable": false,
                 "assign_vip": false
             }
