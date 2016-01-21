@@ -70,7 +70,8 @@
                 "public": "Public",
                 "floating": "Floating",
                 "management": "Management",
-                "storage": "Storage"
+                "storage": "Storage",
+                "ceph_cluster": "Ceph Cluster"
             },
             "login_page": {
                 "username": "Username",

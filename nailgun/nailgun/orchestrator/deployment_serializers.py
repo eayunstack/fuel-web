@@ -459,6 +459,9 @@ class NeutronNetworkDeploymentSerializer(NetworkDeploymentSerializer):
         if objects.Node.should_have_public(node):
             attrs['endpoints']['br-ex'] = {}
             attrs['roles']['ex'] = 'br-ex'
+        if objects.Node.should_have_ceph_cluster(node):
+            attrs['endpoints']['br-ceph-cluster'] = {}
+            attrs['roles']['ceph_cluster'] = 'br-ceph-cluster'
 
         nm = objects.Node.get_network_manager(node)
         iface_types = consts.NETWORK_INTERFACE_TYPES
@@ -516,9 +519,12 @@ class NeutronNetworkDeploymentSerializer(NetworkDeploymentSerializer):
         # We have to add them after br-ethXX bridges because it is the way
         # to provide a right ordering of ifdown/ifup operations with
         # IP interfaces.
-        brnames = ['br-ex', 'br-mgmt', 'br-storage', 'br-fw-admin']
+        brnames = ['br-ex', 'br-mgmt', 'br-storage', 'br-fw-admin',
+                   'br-ceph-cluster']
         if not objects.Node.should_have_public(node):
             brnames.pop(0)
+        if not objects.Node.should_have_ceph_cluster(node):
+            brnames.pop()
 
         for brname in brnames:
             attrs['transformations'].append({
@@ -534,6 +540,8 @@ class NeutronNetworkDeploymentSerializer(NetworkDeploymentSerializer):
         ]
         if objects.Node.should_have_public(node):
             netgroup_mapping.append(('public', 'br-ex'))
+        if objects.Node.should_have_ceph_cluster(node):
+            netgroup_mapping.append(('ceph_cluster', 'br-ceph-cluster'))
 
         netgroups = {}
         for ngname, brname in netgroup_mapping:
@@ -779,6 +787,8 @@ class NeutronNetworkDeploymentSerializer60(
         ]
         if objects.Node.should_have_public(node):
             netgroup_mapping.append(('public', 'br-ex'))
+        if objects.Node.should_have_ceph_cluster(node):
+            netgroup_mapping.append(('ceph_cluster', 'br-ceph-cluster'))
 
         for ngname, brname in netgroup_mapping:
             netgroup = nm.get_node_network_by_netname(node, ngname)

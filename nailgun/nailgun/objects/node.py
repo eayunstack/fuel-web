@@ -160,6 +160,18 @@ class Node(NailgunObject):
         return False
 
     @classmethod
+    def should_have_ceph_cluster(cls, instance):
+        """Determine whether this node has ceph cluster network.
+
+        :param instance: Node DB instance
+        :returns: True when node has ceph cluster network
+        """
+        ctrl = set(['ceph-osd'])
+        if ctrl & (set(instance.roles) or set(instance.pending_roles)):
+            return True
+        return False
+
+    @classmethod
     def create(cls, data):
         """Create Node instance with specified parameters in DB.
         This includes:
@@ -787,6 +799,7 @@ class NodeCollection(NailgunCollection):
             netmanager.assign_ips(instances, 'management')
             netmanager.assign_ips(instances, 'public')
             netmanager.assign_ips(instances, 'storage')
+            netmanager.assign_ips(instances, 'ceph_cluster')
             netmanager.assign_admin_ips(instances)
 
     @classmethod

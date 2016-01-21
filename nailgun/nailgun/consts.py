@@ -63,6 +63,8 @@ NETWORKS = Enum(
     # internal in terms of fuel
     'management',
     'public',
+    # for ceph
+    'ceph_cluster',
 
     # private in terms of fuel
     'fixed',

@@ -494,7 +494,7 @@ define(['utils', 'expression', 'deepModel'], function(utils, Expression) {
             var networks = new models.Networks(this.get('assigned_networks').invoke('getFullNetwork'));
             var untaggedNetworks = networks.filter(function(network) { return _.isNull(network.getVlanRange()); });
             // public and floating networks are allowed to be assigned to the same interface
-            var maxUntaggedNetworksCount = networks.where({name: 'public'}).length && networks.where({name: 'floating'}).length ? 2 : 1;
+            var maxUntaggedNetworksCount = networks.where({name: 'public'}).length && (networks.where({name: 'floating'}).length || networks.where({name: 'ceph_cluster'}).length) ? 2 : 1;
             if (untaggedNetworks.length > maxUntaggedNetworksCount) {
                 errors.push($.t('cluster_page.nodes_tab.configure_interfaces.validation.too_many_untagged_networks'));
             }
