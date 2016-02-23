@@ -80,6 +80,11 @@ class ProvisioningSerializer(object):
     @classmethod
     def serialize_node(cls, cluster_attrs, node):
         """Serialize a single node."""
+        choose_interface_mac = node.admin_interface.mac
+        if not choose_interface_mac:
+            for slave in node.admin_interface.slaves:
+                if slave.ip_addr:
+                    choose_interface_mac = slave.mac
         serialized_node = {
             'uid': node.uid,
             'power_address': node.ip,
@@ -97,7 +102,7 @@ class ProvisioningSerializer(object):
             'netboot_enabled': '1',
             # For provisioning phase
             'kernel_options': {
-                'netcfg/choose_interface': node.admin_interface.mac,
+                'netcfg/choose_interface': choose_interface_mac,
                 'udevrules': cls.interfaces_mapping_for_udev(node)},
             'ks_meta': {
                 'pm_data': {

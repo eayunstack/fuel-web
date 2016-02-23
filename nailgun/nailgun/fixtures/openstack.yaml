@@ -154,6 +154,16 @@
             map_priority: 2
             configurable: true
             assign_vip: false
+          - name: "ceph_cluster"
+            cidr: "192.168.2.0/24"
+            vlan_start: 103
+            use_gateway: false
+            notation: "cidr"
+            render_type: "cidr"
+            render_addr_mask: "ceph_cluster"
+            map_priority: 2
+            configurable: true
+            assign_vip: false
           - name: "private"
             seg_type: "vlan"
             vlan_start: null

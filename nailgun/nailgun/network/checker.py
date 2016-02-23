@@ -119,6 +119,11 @@ class NetworkCheck(object):
                         if n.id == ng['id']][0]
                         for n in iface.assigned_networks_list]
                 crossed_nets = set(nets) & set(untagged_nets.values())
+                node = objects.Node.get_by_mac_or_uid(node_uid=iface.node_id)
+                if not objects.Node.should_have_public(node):
+                    crossed_nets.discard('public')
+                if not objects.Node.should_have_ceph_cluster(node):
+                    crossed_nets.discard('ceph_cluster')
                 if len(crossed_nets) > 1:
                     err_net_names = ['"{0}"'.format(i)
                                      for i in crossed_nets]
