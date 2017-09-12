@@ -164,6 +164,17 @@
             map_priority: 2
             configurable: true
             assign_vip: false
+          - name: "vxlan_tunnel"
+            seg_type: "gre"
+            cidr: "192.168.3.0/24"
+            vlan_start: 104
+            use_gateway: false
+            notation: "cidr"
+            render_type: "cidr"
+            render_addr_mask: "vxlan_tunnel"
+            map_priority: 2
+            configurable: true
+            assign_vip: false
           - name: "private"
             seg_type: "vlan"
             vlan_start: null

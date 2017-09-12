@@ -524,7 +524,7 @@ class NeutronNetworkDeploymentSerializer(NetworkDeploymentSerializer):
         if not objects.Node.should_have_public(node):
             brnames.pop(0)
         if not objects.Node.should_have_ceph_cluster(node):
-            brnames.pop()
+            brnames.remove('br-ceph-cluster')
 
         for brname in brnames:
             attrs['transformations'].append({
@@ -559,25 +559,28 @@ class NeutronNetworkDeploymentSerializer(NetworkDeploymentSerializer):
             attrs['endpoints']['br-fw-admin']['gateway'] = settings.MASTER_IP
 
         # Connect interface bridges to network bridges.
-        for ngname, brname in netgroup_mapping:
-            netgroup = nm.get_node_network_by_netname(node, ngname)
-            if not netgroup['vlan']:
-                # Untagged network.
-                attrs['transformations'].append({
-                    'action': 'add-patch',
-                    'bridges': ['br-%s' % netgroup['dev'], brname],
-                    'trunks': [0]
-                })
-            elif netgroup['vlan'] > 1:
-                # Tagged network.
-                attrs['transformations'].append({
-                    'action': 'add-patch',
-                    'bridges': ['br-%s' % netgroup['dev'], brname],
-                    'tags': [netgroup['vlan'], 0]
-                })
-            else:
-                # FIXME! Should raise some exception I think.
-                logger.error('Invalid vlan for network: %s' % str(netgroup))
+        def _conn_interface_br_to_network_br(netgroup_mapping):
+            for ngname, brname in netgroup_mapping:
+                netgroup = nm.get_node_network_by_netname(node, ngname)
+                if not netgroup['vlan']:
+                    # Untagged network.
+                    attrs['transformations'].append({
+                        'action': 'add-patch',
+                        'bridges': ['br-%s' % netgroup['dev'], brname],
+                        'trunks': [0]
+                    })
+                elif netgroup['vlan'] > 1:
+                    # Tagged network.
+                    attrs['transformations'].append({
+                        'action': 'add-patch',
+                        'bridges': ['br-%s' % netgroup['dev'], brname],
+                        'tags': [netgroup['vlan'], 0]
+                    })
+                else:
+                    # FIXME! Should raise some exception I think.
+                    logger.error('Invalid vlan for network: %s' % str(netgroup))
+
+        _conn_interface_br_to_network_br(netgroup_mapping)
 
         # Dance around Neutron segmentation type.
         if node.cluster.network_config.segmentation_type == 'vlan':
@@ -600,6 +603,20 @@ class NeutronNetworkDeploymentSerializer(NetworkDeploymentSerializer):
                 ]
             })
         elif node.cluster.network_config.segmentation_type == 'gre':
+            # for eayunstack vxlan
+            netgroup = nm.get_node_network_by_netname(node, 'vxlan_tunnel')
+            attrs['endpoints']['br-vxlan-tunnel'] = {}
+            attrs['endpoints']['br-vxlan-tunnel']['IP'] = [netgroup['ip']]
+            attrs['roles']['vxlan_tunnel'] = 'br-vxlan-tunnel'
+
+            attrs['transformations'].append({
+                'action': 'add-br',
+                'name': 'br-vxlan-tunnel',
+            })
+
+            _conn_interface_br_to_network_br([('vxlan_tunnel',
+                                               'br-vxlan-tunnel')])
+
             attrs['roles']['mesh'] = 'br-mgmt'
 
         return attrs
@@ -805,6 +822,11 @@ class NeutronNetworkDeploymentSerializer60(
             if attrs['endpoints'][brname].get('gateway'):
                 attrs['endpoints'][brname]['default_gateway'] = True
                 break
+
+        # for eayunstack vxlan
+        if node.cluster.network_config.segmentation_type == 'gre':
+            attrs['endpoints']['br-vxlan-tunnel']['other_nets'] = \
+                other_nets.get('vxlan_tunnel', [])
 
         return attrs
 
@@ -1221,7 +1243,11 @@ def serialize(cluster, nodes, ignore_customized=False):
     """Serialization depends on deployment mode
     """
     objects.Cluster.set_primary_roles(cluster, nodes)
-    objects.NodeCollection.prepare_for_deployment(cluster.nodes)
+    if cluster.network_config.segmentation_type == "gre":
+        objects.NodeCollection.prepare_for_deployment(cluster.nodes,
+                                                      tunnel_net=True)
+    else:
+        objects.NodeCollection.prepare_for_deployment(cluster.nodes)
     serializer = create_serializer(cluster)
 
     return serializer.serialize(

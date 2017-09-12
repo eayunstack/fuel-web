@@ -233,6 +233,7 @@ def upgrade():
                                               'management',
                                               'public', 'fixed', 'private',
                                               'ceph_cluster',
+                                              'vxlan_tunnel',
                                               name='network_group_name'),
                               nullable=False),
                     sa.Column('release', sa.Integer(), nullable=True),

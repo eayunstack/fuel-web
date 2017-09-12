@@ -124,6 +124,8 @@ class NetworkCheck(object):
                     crossed_nets.discard('public')
                 if not objects.Node.should_have_ceph_cluster(node):
                     crossed_nets.discard('ceph_cluster')
+                if not objects.Node.should_have_vxlan_tunnel(node):
+                    crossed_nets.discard('vxlan_tunnel')
                 if len(crossed_nets) > 1:
                     err_net_names = ['"{0}"'.format(i)
                                      for i in crossed_nets]
