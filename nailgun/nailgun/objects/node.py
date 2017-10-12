@@ -172,6 +172,20 @@ class Node(NailgunObject):
         return False
 
     @classmethod
+    def should_have_vxlan_tunnel(cls, instance):
+        """Determine whether this node has vxlan tunnel network.
+
+        :param instance: Node DB instance
+        :returns: True when node has vxlan tunnel network
+        """
+        if not instance.cluster.network_config.segmentation_type == "gre":
+            return False
+        ctrl = set(['primary-controller', 'controller', 'compute'])
+        if ctrl & (set(instance.roles) or set(instance.pending_roles)):
+            return True
+        return False
+
+    @classmethod
     def create(cls, data):
         """Create Node instance with specified parameters in DB.
         This includes:
@@ -787,7 +801,7 @@ class NodeCollection(NailgunCollection):
         db().flush()
 
     @classmethod
-    def prepare_for_deployment(cls, instances):
+    def prepare_for_deployment(cls, instances, tunnel_net=False):
         """Prepare environment for deployment,
         assign management, public, storage ips
         """
@@ -800,6 +814,8 @@ class NodeCollection(NailgunCollection):
             netmanager.assign_ips(instances, 'public')
             netmanager.assign_ips(instances, 'storage')
             netmanager.assign_ips(instances, 'ceph_cluster')
+            if tunnel_net:
+                netmanager.assign_ips(instances, 'vxlan_tunnel')
             netmanager.assign_admin_ips(instances)
 
     @classmethod

@@ -65,6 +65,8 @@ NETWORKS = Enum(
     'public',
     # for ceph
     'ceph_cluster',
+    # for vxlan tunnel
+    'vxlan_tunnel',
 
     # private in terms of fuel
     'fixed',

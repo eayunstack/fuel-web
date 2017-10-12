@@ -71,7 +71,8 @@
                 "floating": "Floating",
                 "management": "Management",
                 "storage": "Storage",
-                "ceph_cluster": "Ceph Cluster"
+                "ceph_cluster": "Ceph Cluster",
+                "vxlan_tunnel": "Vxlan Tunnel"
             },
             "login_page": {
                 "username": "Username",
