@@ -2188,7 +2188,7 @@
             },
             "editorconfig": {
               "version": "0.11.4",
-              "from": "editorconfig@^0.11.4",
+              "from": "git+https://github.com/editorconfig/editorconfig-core-js.git#v0.11.4",
               "dependencies": {
                 "commander": {
                   "version": "1.1.1",
